@@ -3,6 +3,7 @@ package com.devops.gateway.security;
 import jakarta.validation.constraints.Max;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -24,11 +25,13 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange ->
                         exchange
-                                .pathMatchers("/user-service/api/v1/**")
-                                .permitAll()
+                                .pathMatchers("/user-service/api/v1/**").permitAll()
+                                .pathMatchers("/product-service/api/v1/**").permitAll()
+                                .pathMatchers("/order-service/api/v1/**").permitAll()
                                 .anyExchange()
                                 .authenticated())
-                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
+                .oauth2ResourceServer(t ->
+                        t.jwt(Customizer.withDefaults()));
 
         return http.build();
     }
